@@ -5,6 +5,7 @@ import { searchYts } from "./sources/yts";
 import { searchEztv } from "./sources/eztv";
 import { searchTpbMovies, searchTpbTv } from "./sources/piratebay";
 import { searchX1337Movies, searchX1337Tv } from "./sources/x1337";
+import { searchBitsearchMovies, searchBitsearchTv } from "./sources/bitsearch";
 import { searchNyaa } from "./sources/nyaa";
 import type { TorrentResult } from "./sources/types";
 
@@ -15,6 +16,8 @@ const SOURCE_LABELS: Record<string, string> = {
   "tpb-tv": "TPB",
   "x1337-movies": "1337x",
   "x1337-tv": "1337x",
+  "bitsearch-movies": "Bitsearch",
+  "bitsearch-tv": "Bitsearch",
   nyaa: "Nyaa",
 };
 
@@ -82,9 +85,9 @@ export async function getStreams(type: string, id: string): Promise<StremioStrea
 
     const titleSearches =
       type === "movie"
-        ? [searchTpbMovies(baseQuery), searchX1337Movies(baseQuery)]
+        ? [searchTpbMovies(baseQuery), searchX1337Movies(baseQuery), searchBitsearchMovies(baseQuery)]
         : type === "series"
-          ? [searchTpbTv(episodeQuery), searchX1337Tv(episodeQuery)]
+          ? [searchTpbTv(episodeQuery), searchX1337Tv(episodeQuery), searchBitsearchTv(episodeQuery)]
           : type === "anime"
             ? [searchNyaa(episodeQuery)]
             : [];
