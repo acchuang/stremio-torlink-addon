@@ -42,6 +42,14 @@ http
       const headers = { ...pres.headers };
       const isSettings = req.url.startsWith("/settings");
 
+      // Rewrite Location header on redirects: stremio-server redirects / to
+      // app.strem.io?streamingServer=http://localhost:11470 — replace with external URL.
+      if (headers["location"]) {
+        headers["location"] = headers["location"]
+          .replace(/http:\/\/localhost:11470/g, EXTERNAL)
+          .replace(/http%3A%2F%2Flocalhost%3A11470/gi, encodeURIComponent(EXTERNAL));
+      }
+
       if (isSettings) delete headers["content-length"];
 
       res.writeHead(pres.statusCode, headers);
