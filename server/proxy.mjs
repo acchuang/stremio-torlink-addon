@@ -54,7 +54,21 @@ http
         try {
           const json = JSON.parse(body);
           if (json.baseUrl) json.baseUrl = EXTERNAL;
-          if (json.values) json.values.remoteHttps = new URL(EXTERNAL).hostname;
+          if (json.values) {
+            // Clear remoteHttps — Stremio appends :11470 to this hostname,
+            // but CF Tunnel only routes port 443. Stats work via baseUrl instead.
+            json.values.remoteHttps = "";
+          }
+          // Add our domain to the selections so the user can pick it if needed
+          if (Array.isArray(json.options)) {
+            const opt = json.options.find((o) => o.id === "remoteHttps");
+            if (opt && Array.isArray(opt.selections)) {
+              const hostname = new URL(EXTERNAL).hostname;
+              if (!opt.selections.some((s) => s.val === hostname)) {
+                opt.selections.push({ name: hostname, val: hostname });
+              }
+            }
+          }
           res.end(JSON.stringify(json));
         } catch {
           res.end(body);
