@@ -29,6 +29,14 @@ if (!EXTERNAL) {
 
 http
   .createServer((req, res) => {
+    // stremio-server tries to verify its own SSL cert — always fails behind a tunnel.
+    // Intercept and return the public URL directly so Stremio accepts the connection.
+    if (req.url.startsWith("/get-https")) {
+      res.writeHead(200, { "content-type": "text/plain" });
+      res.end(EXTERNAL);
+      return;
+    }
+
     const opts = new URL(req.url, UPSTREAM);
     const preq = http.request(opts, (pres) => {
       const headers = { ...pres.headers };
