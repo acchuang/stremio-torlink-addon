@@ -7,6 +7,7 @@ export interface TorrentResult {
   source: string;
   magnet: string;
   added?: number;
+  fileIdx?: number;
 }
 
 export interface SearchOptions {

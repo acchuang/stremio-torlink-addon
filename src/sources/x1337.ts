@@ -80,7 +80,17 @@ async function search(
   }
   if (!base) throw lastError ?? new Error("1337x unreachable");
 
+  // Require ALL meaningful query tokens to appear in the result name
+  const STOP = new Set(["the", "a", "an", "of", "and", "or", "to"]);
+  const tokens = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const need = tokens.filter((t) => !STOP.has(t));
+
   const rows = parseRows(html)
+    .filter((r) => {
+      if (!need.length) return true;
+      const n = r.name.toLowerCase();
+      return need.every((t) => n.includes(t));
+    })
     .sort((a, b) => b.seeders - a.seeders)
     .slice(0, MAX_DETAILS);
 

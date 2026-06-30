@@ -63,6 +63,7 @@ export async function searchYts(
         source: "yts",
         magnet: buildMagnet(infoHash, name),
         added: movie.date_uploaded_unix,
+        fileIdx: 0,
       });
     }
   }

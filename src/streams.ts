@@ -76,12 +76,13 @@ export async function getStreams(type: string, id: string): Promise<StremioStrea
     titleResults = settle(titleSettled);
   }
 
-  const all = dedup([...nativeResults, ...titleResults]).sort(
-    (a, b) => b.seeders - a.seeders,
-  );
+  const all = dedup([...nativeResults, ...titleResults])
+    .filter((r) => r.seeders > 0)
+    .sort((a, b) => b.seeders - a.seeders);
 
   return all.map((r) => ({
     infoHash: r.infoHash,
+    ...(r.fileIdx !== undefined && { fileIdx: r.fileIdx }),
     title: [
       `[${SOURCE_LABELS[r.source] ?? r.source}] ${r.name}`,
       `👥 ${r.seeders} seeds · ${formatBytes(r.sizeBytes)}`,
