@@ -1,0 +1,20 @@
+{
+  "name": "stremio-torlink-addon",
+  "version": "1.0.0",
+  "description": "Stremio addon — streams from YTS, EZTV, 1337x, TPB, Nyaa",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "stremio-addon-sdk": "^1.6.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "ts-node": "^10",
+    "typescript": "^5"
+  }
+}
