@@ -86,7 +86,7 @@ export async function getStreams(type: string, id: string): Promise<StremioStrea
       `[${SOURCE_LABELS[r.source] ?? r.source}] ${r.name}`,
       `👥 ${r.seeders} seeds · ${formatBytes(r.sizeBytes)}`,
     ].join("\n"),
-    sources: TRACKERS,
+    sources: TRACKERS.map((t) => `tracker:${t}`),
     behaviorHints: { bingeGroup: `torlink|${type}|${imdbId}` },
   }));
 }
