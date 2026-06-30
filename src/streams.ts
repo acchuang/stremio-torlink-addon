@@ -20,7 +20,7 @@ const SOURCE_LABELS: Record<string, string> = {
 
 function dedup(results: TorrentResult[]): TorrentResult[] {
   const seen = new Set<string>();
-  return results.filter((r) => !seen.has(r.infoHash) && seen.add(r.infoHash));
+  return results.filter((r) => r.infoHash && !seen.has(r.infoHash) && seen.add(r.infoHash));
 }
 
 function settle<T>(results: PromiseSettledResult<T[]>[]): T[] {
@@ -35,9 +35,26 @@ export interface StremioStream {
 }
 
 export async function getStreams(type: string, id: string): Promise<StremioStream[]> {
-  const [imdbId, rawSeason, rawEpisode] = id.split(":");
-  const season = rawSeason ? parseInt(rawSeason, 10) : undefined;
-  const episode = rawEpisode ? parseInt(rawEpisode, 10) : undefined;
+  const parts = id.split(":");
+  let imdbId: string;
+  let rawSeason: string | undefined;
+  let rawEpisode: string | undefined;
+
+  if (parts[0] === "kitsu") {
+    // kitsu:NNNN or kitsu:NNNN:season:episode
+    imdbId = `kitsu:${parts[1] ?? ""}`;
+    rawSeason = parts[2];
+    rawEpisode = parts[3];
+  } else {
+    imdbId = parts[0] ?? "";
+    rawSeason = parts[1];
+    rawEpisode = parts[2];
+  }
+
+  const parsedSeason = rawSeason ? parseInt(rawSeason, 10) : NaN;
+  const parsedEpisode = rawEpisode ? parseInt(rawEpisode, 10) : NaN;
+  const season = !isNaN(parsedSeason) ? parsedSeason : undefined;
+  const episode = !isNaN(parsedEpisode) ? parsedEpisode : undefined;
 
   if (!imdbId) return [];
 
@@ -69,7 +86,7 @@ export async function getStreams(type: string, id: string): Promise<StremioStrea
         : type === "series"
           ? [searchTpbTv(episodeQuery), searchX1337Tv(episodeQuery)]
           : type === "anime"
-            ? [searchNyaa(meta.name)]
+            ? [searchNyaa(episodeQuery)]
             : [];
 
     const titleSettled = await Promise.allSettled(titleSearches);

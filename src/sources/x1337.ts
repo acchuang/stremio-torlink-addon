@@ -89,7 +89,13 @@ async function search(
     .filter((r) => {
       if (!need.length) return true;
       const n = r.name.toLowerCase();
-      return need.every((t) => n.includes(t));
+      return need.every((t) => {
+        if (n.includes(t)) return true;
+        // SxxExx ↔ Nx0E alternate episode notation (e.g. "s03e07" ↔ "3x07")
+        const ep = t.match(/^s(\d+)e(\d+)$/);
+        if (ep) return new RegExp(`${parseInt(ep[1]!, 10)}x${ep[2]}`, "i").test(n);
+        return false;
+      });
     })
     .sort((a, b) => b.seeders - a.seeders)
     .slice(0, MAX_DETAILS);

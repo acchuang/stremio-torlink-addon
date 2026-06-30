@@ -19,8 +19,13 @@
 import http from "http";
 
 const UPSTREAM = process.env.UPSTREAM_URL ?? "http://localhost:11470";
-const EXTERNAL = process.env.EXTERNAL_URL ?? "https://server.oilygold.xyz";
+const EXTERNAL = process.env.EXTERNAL_URL;
 const PORT = parseInt(process.env.PORT ?? "11480", 10);
+
+if (!EXTERNAL) {
+  console.error("Error: EXTERNAL_URL is required. Usage: EXTERNAL_URL=https://your-domain.com node proxy.mjs");
+  process.exit(1);
+}
 
 http
   .createServer((req, res) => {

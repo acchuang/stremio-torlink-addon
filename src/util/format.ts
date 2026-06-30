@@ -18,7 +18,7 @@ export function parseSize(s: string): number {
 
 export function formatBytes(bytes: number): string {
   if (!bytes || !Number.isFinite(bytes)) return "0 B";
-  const units = ["B", "KB", "MB", "GB", "TB"];
+  const units = ["B", "KiB", "MiB", "GiB", "TiB"];
   let n = bytes;
   let i = 0;
   while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }

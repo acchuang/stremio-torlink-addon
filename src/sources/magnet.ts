@@ -22,5 +22,8 @@ export function unescapeEntities(s: string): string {
     .replace(/&#8217;|&#0?39;|&apos;/g, "'")
     .replace(/&#8220;|&#8221;|&quot;/g, '"')
     .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">");
+    .replace(/&gt;/g, ">")
+    .replace(/&#160;|&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(parseInt(n, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)));
 }
